@@ -1,6 +1,9 @@
+import { Either, left, right } from '@/core/either';
 import { Entity } from '../../core/entities/entity';
 import { UniqueEntityID } from '../../core/entities/unique-entity-id';
 import { Cpf } from '../shared/value-objects/cpf';
+import { IncorrectPasswordError, SamePasswordError } from './user.errors';
+import { HashService } from '@/core/services/cryptography/hash-service';
 
 export type UserRole = 'ADMIN' | 'COURIER';
 
@@ -10,6 +13,17 @@ interface UserProps {
   password: string;
   role: UserRole;
 }
+
+interface ChangePasswordParams {
+  oldPassword: string
+  newPassword: string
+  hashService: HashService
+}
+
+type ChangePasswordResponse = Either<
+  IncorrectPasswordError | SamePasswordError,
+  null
+>;
 
 export class User extends Entity<UserProps> {
   get name(): string {
@@ -32,5 +46,28 @@ export class User extends Entity<UserProps> {
     const user = new User(props, id);
 
     return user;
+  }
+
+  async changePassword({
+    oldPassword,
+    newPassword,
+    hashService,
+  }: ChangePasswordParams): Promise<ChangePasswordResponse> {
+    const isPasswordCorrect = await hashService.compare(
+      oldPassword,
+      this.props.password,
+    );
+
+    if (!isPasswordCorrect) {
+      return left(new IncorrectPasswordError());
+    }
+
+    if (oldPassword === newPassword) {
+      return left(new SamePasswordError());
+    }
+
+    this.props.password = await hashService.hash(newPassword);
+
+    return right(null);
   }
 }

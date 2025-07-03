@@ -1,8 +1,7 @@
-import { HashComparer } from '@/core/services/cryptography/hash-comparer';
-import { HashGenerator } from '@/core/services/cryptography/hash-generator';
+import { HashService } from '@/core/services/cryptography/hash-service';
 import { hash, compare } from 'bcryptjs';
 
-export class BcryptHasher implements HashGenerator, HashComparer {
+export class BcryptHasher implements HashService {
   private HASH_SALT_LENGTH = 8;
 
   hash(plain: string): Promise<string> {

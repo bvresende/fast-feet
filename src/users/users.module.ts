@@ -5,6 +5,7 @@ import { USER_REPOSITORY } from '@/@domain/users/user.interfaces';
 import { UserPrismaRepository } from './infrastructure/database/user.prisma.repository';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { CryptographyModule } from '@/cryptography/cryptography.module';
+import { ChangeUserPasswordUseCase } from './application/use-cases/change-user-password.use-case';
 
 const userRepositoryProvider: Provider = {
   provide: USER_REPOSITORY,
@@ -14,6 +15,12 @@ const userRepositoryProvider: Provider = {
 @Module({
   imports: [CryptographyModule],
   controllers: [UsersController],
-  providers: [CreateUserUseCase, userRepositoryProvider, PrismaService],
+  providers: [
+    CreateUserUseCase,
+    ChangeUserPasswordUseCase,
+    userRepositoryProvider,
+    PrismaService,
+  ],
+  exports: [userRepositoryProvider],
 })
-export class UsersModule {}
+export class UsersModule { }

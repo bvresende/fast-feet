@@ -5,9 +5,9 @@ import {
 } from '@/@domain/users/user.interfaces';
 import { User } from '@/@domain/users/user';
 import { Cpf } from '@/@domain/shared/value-objects/cpf';
-import { HashGenerator } from '@/core/services/cryptography/hash-generator';
 import { Either, left, right } from '@/core/either';
 import { UserAlreadyExistsError } from './errors/user-already-exists.error';
+import { HashService } from '@/core/services/cryptography/hash-service';
 
 interface CreateUserUseCaseRequest {
   name: string;
@@ -27,8 +27,8 @@ export class CreateUserUseCase {
   constructor(
     @Inject(USER_REPOSITORY)
     private readonly userRepository: IUserRepository,
-    private readonly hashGenerator: HashGenerator,
-  ) {}
+    private readonly hashService: HashService,
+  ) { }
 
   async execute({
     name,
@@ -49,7 +49,7 @@ export class CreateUserUseCase {
       return left(new UserAlreadyExistsError());
     }
 
-    const hashedPassword = await this.hashGenerator.hash(password);
+    const hashedPassword = await this.hashService.hash(password);
 
     const user = User.create({
       name,

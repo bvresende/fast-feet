@@ -6,7 +6,7 @@ import { UserPrismaMapper } from './user.prisma.mapper';
 
 @Injectable()
 export class UserPrismaRepository implements IUserRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findByCpf(cpf: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({
@@ -20,10 +20,31 @@ export class UserPrismaRepository implements IUserRepository {
     return UserPrismaMapper.toDomain(user);
   }
 
+  async findById(id: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+
+    if (!user) {
+      return null;
+    }
+
+    return UserPrismaMapper.toDomain(user);
+  }
+
   async create(user: User): Promise<void> {
     const data = UserPrismaMapper.toPrisma(user);
 
     await this.prisma.user.create({
+      data,
+    });
+  }
+
+  async save(user: User): Promise<void> {
+    const data = UserPrismaMapper.toPrisma(user);
+
+    await this.prisma.user.update({
+      where: {
+        id: user.id.toString(),
+      },
       data,
     });
   }

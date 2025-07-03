@@ -13,7 +13,7 @@ export class UserPrismaMapper {
   static toDomain(raw: PrismaUser): User {
     const cpfOrError = Cpf.create(raw.cpf);
 
-    if (cpfOrError.isLeft()) {
+    if (cpfOrError.isLeft()) { // cpf no formato inválido no banco de dados
       throw new InvalidCpfError();
     }
 
