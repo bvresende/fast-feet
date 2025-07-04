@@ -9,8 +9,11 @@ export class UserPrismaRepository implements IUserRepository {
   constructor(private readonly prisma: PrismaService) { }
 
   async findByCpf(cpf: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({
-      where: { cpf },
+    const user = await this.prisma.user.findFirst({
+      where: {
+        cpf,
+        deletedAt: null,
+      },
     });
 
     if (!user) {
@@ -21,7 +24,12 @@ export class UserPrismaRepository implements IUserRepository {
   }
 
   async findById(id: string): Promise<User | null> {
-    const user = await this.prisma.user.findUnique({ where: { id } });
+    const user = await this.prisma.user.findFirst({
+      where: {
+        id,
+        deletedAt: null
+      }
+    });
 
     if (!user) {
       return null;

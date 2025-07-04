@@ -12,6 +12,7 @@ interface UserProps {
   cpf: Cpf;
   password: string;
   role: UserRole;
+  deletedAt?: Date;
 }
 
 interface ChangePasswordParams {
@@ -42,10 +43,18 @@ export class User extends Entity<UserProps> {
     return this.props.role;
   }
 
+  get deletedAt(): Date | undefined {
+    return this.props.deletedAt;
+  }
+
   static create(props: UserProps, id?: UniqueEntityID) {
     const user = new User(props, id);
 
     return user;
+  }
+
+  public delete(): void {
+    this.props.deletedAt = new Date();
   }
 
   async changePassword({

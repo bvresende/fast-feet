@@ -5,7 +5,7 @@ import {
 import { IUserRepository, USER_REPOSITORY } from '@/@domain/users/user.interfaces';
 import { Either, left, right } from '@/core/either';
 import { UnauthorizedError } from './errors/user-unauthorized.error';
-import { UseNotFoundError } from './errors/user-not-found.error';
+import { UserNotFoundError } from './errors/user-not-found.error';
 import { ChangeUserPasswordDto } from '@/users/infrastructure/http/dtos/change-user-password.dto';
 import { IncorrectPasswordError, SamePasswordError } from '@/@domain/users/user.errors';
 import { UserInvalidCredentialsError } from './errors/user-invalid-credentials';
@@ -16,7 +16,7 @@ interface ChangeUserPasswordUseCaseRequest extends ChangeUserPasswordDto {
 }
 
 type ChangeUserPasswordUseCaseResponse = Either<
-  UnauthorizedError | UseNotFoundError,
+  UnauthorizedError | UserNotFoundError,
   null
 >;
 
@@ -47,7 +47,7 @@ export class ChangeUserPasswordUseCase {
     const targetUser = await this.userRepository.findByCpf(cpf);
 
     if (!targetUser) {
-      return left(new UseNotFoundError());
+      return left(new UserNotFoundError());
     }
 
     const result = await targetUser.changePassword({ oldPassword, newPassword, hashService: this.hashService });

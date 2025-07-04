@@ -18,12 +18,14 @@ export class UserPrismaMapper {
     }
 
     const cpf = cpfOrError.value;
+
     return User.create(
       {
         name: raw.name,
         password: raw.password,
         cpf,
         role: raw.role,
+        deletedAt: raw.deletedAt ?? undefined,
       },
       new UniqueEntityID(raw.id),
     );
@@ -42,6 +44,7 @@ export class UserPrismaMapper {
       cpf: user.cpf.value,
       password: user.password,
       role: user.role,
+      deletedAt: user.deletedAt,
     };
   }
 }

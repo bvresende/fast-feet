@@ -13,13 +13,38 @@ enum UserRole {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  cpf       String    @unique
-  password  String
-  role      UserRole  @default(COURIER)
+  id       String   @id @default(uuid())
+  name     String
+  cpf      String   @unique
+  password String
+  role     UserRole @default(COURIER)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@map("users")
+}
+
+model Recipient {
+  id          String @id @default(uuid())
+  name        String
+  cpf         String @unique
+  email       String
+  phoneNumber String
+
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  zipCode      String  @map("zip_code")
+  latitude     Float?
+  longitude    Float?
+
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
 
-  @@map("users")
+  @@map("recipients")
 }

@@ -6,6 +6,7 @@ import { UserPrismaRepository } from './infrastructure/database/user.prisma.repo
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { CryptographyModule } from '@/cryptography/cryptography.module';
 import { ChangeUserPasswordUseCase } from './application/use-cases/change-user-password.use-case';
+import { DeleteUserUseCase } from './application/use-cases/delete-user.use-case';
 
 const userRepositoryProvider: Provider = {
   provide: USER_REPOSITORY,
@@ -18,6 +19,7 @@ const userRepositoryProvider: Provider = {
   providers: [
     CreateUserUseCase,
     ChangeUserPasswordUseCase,
+    DeleteUserUseCase,
     userRepositoryProvider,
     PrismaService,
   ],
