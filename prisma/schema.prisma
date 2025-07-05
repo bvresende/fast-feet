@@ -22,6 +22,7 @@ model User {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
   deletedAt DateTime? @map("deleted_at")
+  Package   Package[]
 
   @@map("users")
 }
@@ -45,6 +46,35 @@ model Recipient {
 
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime? @updatedAt @map("updated_at")
+  Package   Package[]
 
   @@map("recipients")
+}
+
+enum PackageStatus {
+  WAITING_FOR_PICKUP
+  IN_TRANSIT
+  DELIVERED
+  RETURNED
+}
+
+model Package {
+  id          String        @id @default(uuid())
+  description String
+  status      PackageStatus @default(WAITING_FOR_PICKUP)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime?     @updatedAt @map("updated_at")
+
+  pickedUpAt  DateTime? @map("picked_up_at")
+  deliveredAt DateTime? @map("delivered_at")
+  returnedAt  DateTime? @map("returned_at")
+  photoUrl    String?   @map("photo_url")
+
+  recipientId String    @map("recipient_id")
+  recipient   Recipient @relation(fields: [recipientId], references: [id])
+
+  courierId String? @map("courier_id")
+  courier   User?   @relation(fields: [courierId], references: [id])
+
+  @@map("packages")
 }

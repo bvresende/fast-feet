@@ -6,7 +6,7 @@ import { RecipientsController } from './infrastructure/http/recipients.controlle
 import { UsersModule } from '@/users/users.module';
 import { PrismaService } from '@/database/prisma/prisma.service';
 
-const repositoryProvider: Provider = {
+const recipientRepositoryProvider: Provider = {
   provide: RECIPIENT_REPOSITORY,
   useClass: RecipientPrismaRepository,
 };
@@ -14,6 +14,7 @@ const repositoryProvider: Provider = {
 @Module({
   imports: [UsersModule],
   controllers: [RecipientsController],
-  providers: [CreateRecipientUseCase, repositoryProvider, PrismaService],
+  providers: [CreateRecipientUseCase, recipientRepositoryProvider, PrismaService],
+  exports: [recipientRepositoryProvider],
 })
 export class RecipientsModule { }

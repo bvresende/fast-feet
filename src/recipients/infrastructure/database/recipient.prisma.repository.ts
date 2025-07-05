@@ -20,6 +20,18 @@ export class RecipientPrismaRepository implements IRecipientRepository {
     return RecipientPrismaMapper.toDomain(recipient);
   }
 
+  async findById(id: string): Promise<Recipient | null> {
+    const recipient = await this.prisma.recipient.findUnique({
+      where: { id },
+    });
+
+    if (!recipient) {
+      return null;
+    }
+
+    return RecipientPrismaMapper.toDomain(recipient);
+  }
+
   async create(recipient: Recipient): Promise<void> {
     const data = RecipientPrismaMapper.toPrisma(recipient);
 
