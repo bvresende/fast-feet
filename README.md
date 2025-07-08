@@ -7,8 +7,8 @@
 [x] Deve ser possível realizar o CRUD dos destinatários
 [x] Deve ser possível realizar o CRUD das encomendas
 [x] Deve ser possível retirar uma encomenda
-[] Deve ser possível marcar uma encomenda como entregue
-[] Deve ser possível marcar uma encomenda como devolvida
+[x] Deve ser possível marcar uma encomenda como entregue
+[x] Deve ser possível marcar uma encomenda como devolvida
 [] Deve ser possível listar as encomendas com endereços de entrega próximo ao local do entregador
 [] Deve ser possível listar as entregas de um usuário
 [] Deve ser possível notificar o destinatário a cada alteração no status da encomenda
@@ -20,5 +20,5 @@
 [x] Somente usuário do tipo admin pode realizar operações de CRUD dos destinatários
 [x] Somente usuário do tipo admin pode realizar operações de CRUD nas encomendas
 <!-- [] Para marcar uma encomenda como entregue é obrigatório o envio de uma foto -->
-[] Somente o entregador que retirou a encomenda pode marcar ela como entregue
+[x] Somente o entregador que retirou a encomenda pode marcar ela como entregue
 [] Não deve ser possível um entregador listar as encomendas de outro entregador

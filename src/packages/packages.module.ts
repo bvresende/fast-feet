@@ -8,6 +8,7 @@ import { RecipientsModule } from '@/recipients/recipients.module';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { PickupPackageUseCase } from './application/use-cases/pickup-package.use-case';
 import { DeliverPackageUseCase } from './application/use-cases/deliver-package.use-case';
+import { ReturnPackageUseCase } from './application/use-cases/return-package.use-case';
 
 const packageRepositoryProvider: Provider = {
   provide: PACKAGE_REPOSITORY,
@@ -24,6 +25,7 @@ const packageRepositoryProvider: Provider = {
     CreatePackageUseCase,
     PickupPackageUseCase,
     DeliverPackageUseCase,
+    ReturnPackageUseCase,
     packageRepositoryProvider,
     PrismaService
   ],

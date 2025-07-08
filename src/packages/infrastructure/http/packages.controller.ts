@@ -25,6 +25,7 @@ import { PackageNotFoundError } from '@/packages/application/use-cases/errors/pa
 import { ActionNotAllowedError } from '@/packages/application/use-cases/errors/action-not-allowed.error';
 import { DeliverPackageUseCase } from '@/packages/application/use-cases/deliver-package.use-case';
 import { DeliverPackageDto } from './dtos/deliver-package.dto';
+import { ReturnPackageUseCase } from '@/packages/application/use-cases/return-package.use-case';
 
 @Controller('packages')
 @UseGuards(AuthGuard('jwt'))
@@ -33,6 +34,7 @@ export class PackagesController {
     private readonly createPackageUseCase: CreatePackageUseCase,
     private readonly pickupPackageUseCase: PickupPackageUseCase,
     private readonly deliverPackageUseCase: DeliverPackageUseCase,
+    private readonly returnPackageUseCase: ReturnPackageUseCase,
   ) { }
 
   @Post()
@@ -100,6 +102,28 @@ export class PackagesController {
       packageId,
       courierId,
       photoUrl: body.photoUrl,
+    });
+
+    if (result.isLeft()) {
+      const error = result.value;
+
+      switch (error.constructor) {
+        case PackageNotFoundError:
+          throw new NotFoundException(error.message);
+        case ActionNotAllowedError:
+          throw new ForbiddenException(error.message);
+        default:
+          throw new BadRequestException();
+      }
+    }
+  }
+
+  @Patch(':id/return')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async return(@Param('id') packageId: string) {
+    const result = await this.returnPackageUseCase.execute({
+      packageId
     });
 
     if (result.isLeft()) {
