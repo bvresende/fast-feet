@@ -6,6 +6,7 @@ import { PackagesController } from './infrastructure/http/packages.controller';
 import { UsersModule } from '@/users/users.module';
 import { RecipientsModule } from '@/recipients/recipients.module';
 import { PrismaService } from '@/database/prisma/prisma.service';
+import { PickupPackageUseCase } from './application/use-cases/pickup-package.use-case';
 
 const packageRepositoryProvider: Provider = {
   provide: PACKAGE_REPOSITORY,
@@ -13,8 +14,16 @@ const packageRepositoryProvider: Provider = {
 };
 
 @Module({
-  imports: [UsersModule, RecipientsModule],
+  imports: [
+    UsersModule,
+    RecipientsModule
+  ],
   controllers: [PackagesController],
-  providers: [CreatePackageUseCase, packageRepositoryProvider, PrismaService],
+  providers: [
+    CreatePackageUseCase,
+    PickupPackageUseCase,
+    packageRepositoryProvider,
+    PrismaService
+  ],
 })
 export class PackagesModule { }

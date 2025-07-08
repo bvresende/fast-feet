@@ -19,6 +19,7 @@ export interface PackageProps {
 interface CreatePackageProps {
   recipientId: UniqueEntityID;
   description: string;
+  status?: PackageStatus;
 }
 
 export class Package extends Entity<PackageProps> {
@@ -39,7 +40,7 @@ export class Package extends Entity<PackageProps> {
     const pkg = new Package(
       {
         ...props,
-        status: PackageStatus.WAITING_FOR_PICKUP,
+        status: props.status ?? PackageStatus.WAITING_FOR_PICKUP,
         createdAt: new Date(),
       },
       id,
