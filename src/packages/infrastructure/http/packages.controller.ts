@@ -23,6 +23,8 @@ import { PickupPackageUseCase } from '@/packages/application/use-cases/pickup-pa
 import { InvalidCourierError } from '@/packages/application/use-cases/errors/invalid-courier';
 import { PackageNotFoundError } from '@/packages/application/use-cases/errors/package-not-found';
 import { ActionNotAllowedError } from '@/packages/application/use-cases/errors/action-not-allowed.error';
+import { DeliverPackageUseCase } from '@/packages/application/use-cases/deliver-package.use-case';
+import { DeliverPackageDto } from './dtos/deliver-package.dto';
 
 @Controller('packages')
 @UseGuards(AuthGuard('jwt'))
@@ -30,6 +32,7 @@ export class PackagesController {
   constructor(
     private readonly createPackageUseCase: CreatePackageUseCase,
     private readonly pickupPackageUseCase: PickupPackageUseCase,
+    private readonly deliverPackageUseCase: DeliverPackageUseCase,
   ) { }
 
   @Post()
@@ -73,6 +76,36 @@ export class PackagesController {
       switch (error.constructor) {
         case InvalidCourierError:
           throw new ConflictException(error.message);
+        case PackageNotFoundError:
+          throw new NotFoundException(error.message);
+        case ActionNotAllowedError:
+          throw new ForbiddenException(error.message);
+        default:
+          throw new BadRequestException();
+      }
+    }
+  }
+
+  @Patch(':id/deliver')
+  @UseGuards(AuthGuard('jwt'))
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async deliver(
+    @Request() req,
+    @Param('id') packageId: string,
+    @Body() body: DeliverPackageDto,
+  ) {
+    const courierId = req.user.sub;
+
+    const result = await this.deliverPackageUseCase.execute({
+      packageId,
+      courierId,
+      photoUrl: body.photoUrl,
+    });
+
+    if (result.isLeft()) {
+      const error = result.value;
+
+      switch (error.constructor) {
         case PackageNotFoundError:
           throw new NotFoundException(error.message);
         case ActionNotAllowedError:
