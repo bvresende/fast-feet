@@ -13,6 +13,7 @@ import {
   Param,
   ConflictException,
   ForbiddenException,
+  Get,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CreatePackageDto } from './dtos/create-package.dto';
@@ -26,6 +27,8 @@ import { ActionNotAllowedError } from '@/packages/application/use-cases/errors/a
 import { DeliverPackageUseCase } from '@/packages/application/use-cases/deliver-package.use-case';
 import { DeliverPackageDto } from './dtos/deliver-package.dto';
 import { ReturnPackageUseCase } from '@/packages/application/use-cases/return-package.use-case';
+import { FetchCourierDeliveredPackagesUseCase } from '@/packages/application/use-cases/fetch-courier-delivered-packages.use-case';
+import { PackagePresenter } from './presenters/package.presenter';
 
 @Controller('packages')
 @UseGuards(AuthGuard('jwt'))
@@ -35,6 +38,7 @@ export class PackagesController {
     private readonly pickupPackageUseCase: PickupPackageUseCase,
     private readonly deliverPackageUseCase: DeliverPackageUseCase,
     private readonly returnPackageUseCase: ReturnPackageUseCase,
+    private readonly fetchCourierDeliveredPackagesUseCase: FetchCourierDeliveredPackagesUseCase,
   ) { }
 
   @Post()
@@ -138,5 +142,25 @@ export class PackagesController {
           throw new BadRequestException();
       }
     }
+  }
+
+  @Get('/delivered')
+  @UseGuards(AuthGuard('jwt'))
+  async fetchDelivered(@Request() req) {
+    const courierId = req.user.sub;
+
+    const result = await this.fetchCourierDeliveredPackagesUseCase.execute({
+      courierId,
+    });
+
+    if (result.isLeft()) {
+      throw new BadRequestException();
+    }
+
+    const packages = result.value;
+
+    return {
+      packages: packages.map(PackagePresenter.toHTTP),
+    };
   }
 }

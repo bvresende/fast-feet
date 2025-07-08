@@ -3,6 +3,7 @@ import { Package } from '@/@domain/packages/package';
 import { IPackageRepository } from '@/@domain/packages/package.interfaces';
 import { PackagePrismaMapper } from './package.prisma.mapper';
 import { PrismaService } from '@/database/prisma/prisma.service';
+import { PackageStatus } from '@prisma/client';
 
 @Injectable()
 export class PackagePrismaRepository implements IPackageRepository {
@@ -33,5 +34,22 @@ export class PackagePrismaRepository implements IPackageRepository {
       where: { id: pkg.id.toString() },
       data,
     });
+  }
+
+  async findManyByCourierIdAndStatus(
+    courierId: string,
+    status: PackageStatus,
+  ): Promise<Package[]> {
+    const packagesDb = await this.prisma.package.findMany({
+      where: {
+        courierId,
+        status,
+      },
+      orderBy: {
+        deliveredAt: 'desc',
+      },
+    });
+
+    return packagesDb.map(PackagePrismaMapper.toDomain);
   }
 }
