@@ -4,6 +4,7 @@ import { IPackageRepository } from '@/@domain/packages/package.interfaces';
 import { PackagePrismaMapper } from './package.prisma.mapper';
 import { PrismaService } from '@/database/prisma/prisma.service';
 import { PackageStatus } from '@prisma/client';
+import { DomainEvents } from '@/core/events/domain-events';
 
 @Injectable()
 export class PackagePrismaRepository implements IPackageRepository {
@@ -30,10 +31,14 @@ export class PackagePrismaRepository implements IPackageRepository {
   async save(pkg: Package): Promise<void> {
     const data = PackagePrismaMapper.toPrisma(pkg);
 
+    DomainEvents.markAggregateForDispatch(pkg);
+
     await this.prisma.package.update({
       where: { id: pkg.id.toString() },
       data,
     });
+
+    DomainEvents.dispatchEventsForAggregate(pkg.id);
   }
 
   async findManyByCourierIdAndStatus(

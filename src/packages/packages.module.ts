@@ -10,6 +10,7 @@ import { PickupPackageUseCase } from './application/use-cases/pickup-package.use
 import { DeliverPackageUseCase } from './application/use-cases/deliver-package.use-case';
 import { ReturnPackageUseCase } from './application/use-cases/return-package.use-case';
 import { FetchCourierDeliveredPackagesUseCase } from './application/use-cases/fetch-courier-delivered-packages.use-case';
+import { NotifyRecipientOnPackageStatusChangedSubscriber } from './application/subscribers/notify-recipient-on-package-status-changed.subscriber';
 
 const packageRepositoryProvider: Provider = {
   provide: PACKAGE_REPOSITORY,
@@ -28,6 +29,7 @@ const packageRepositoryProvider: Provider = {
     DeliverPackageUseCase,
     ReturnPackageUseCase,
     FetchCourierDeliveredPackagesUseCase,
+    NotifyRecipientOnPackageStatusChangedSubscriber,
     packageRepositoryProvider,
     PrismaService
   ],

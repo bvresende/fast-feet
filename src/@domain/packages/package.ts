@@ -1,8 +1,9 @@
 import { PackageStatus } from '@prisma/client';
-import { Entity } from '@/core/entities/entity';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Either, left, right } from '@/core/either';
 import { CouriersAreNotTheSame, NotInTransit, NotWaitingPickup } from './package.errors';
+import { AggregateRoot } from '@/core/entities/aggregate-root';
+import { PackageStatusChangedEvent } from './events/package-status-changed.event';
 
 export interface PackageProps {
   recipientId: UniqueEntityID;
@@ -22,7 +23,7 @@ interface CreatePackageProps {
   status?: PackageStatus;
 }
 
-export class Package extends Entity<PackageProps> {
+export class Package extends AggregateRoot<PackageProps> {
   get recipientId() { return this.props.recipientId; }
   get description() { return this.props.description; }
   get status() { return this.props.status; }
@@ -58,6 +59,8 @@ export class Package extends Entity<PackageProps> {
     this.props.status = PackageStatus.IN_TRANSIT;
     this.props.pickedUpAt = new Date();
 
+    this.addDomainEvent(new PackageStatusChangedEvent(this));
+
     return right(null);
   }
 
@@ -77,6 +80,8 @@ export class Package extends Entity<PackageProps> {
     this.props.photoUrl = photoUrl;
     this.props.deliveredAt = new Date();
 
+    this.addDomainEvent(new PackageStatusChangedEvent(this));
+
     return right(null);
   }
 
@@ -88,6 +93,8 @@ export class Package extends Entity<PackageProps> {
     this.props.status = PackageStatus.RETURNED;
     this.props.courierId = null;
     this.props.returnedAt = new Date();
+
+    this.addDomainEvent(new PackageStatusChangedEvent(this));
 
     return right(null);
   }
